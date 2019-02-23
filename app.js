@@ -14,6 +14,9 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.use('/api', require('./src/route/api'));
+app.use('/oauth', require('./src/route/oauth'));
+
 app.get('/', (req, res) => {
   res.status(200).send('Success');
 });
