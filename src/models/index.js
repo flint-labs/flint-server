@@ -1,23 +1,13 @@
-'use strict';
-
-require('dotenv').config();
-
 const Sequelize = require('sequelize');
+const { dbConfig } = require('../../config');
 
-const env = process.env.NODE_ENV || 'development';
-const config = require('../../config/sequelize.json')[env];
-
-const db = {};
+const { database, username, password } = dbConfig;
 
 const sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  config,
+  database, username, password, dbConfig,
 );
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+const db = { sequelize, Sequelize };
 
 db.Users = require('./users')(sequelize, Sequelize);
 db.Challenges = require('./challenges')(sequelize, Sequelize);
