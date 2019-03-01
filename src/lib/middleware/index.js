@@ -35,7 +35,14 @@ exports.checkToken = token => async (req, res, next) => {
       logger.debug(`${key}  : ${value}`);
       if (key === 'sub') if (value !== token) { logger.error(`The token '${value}' should be '${token}'`); throw Error('Token is invalid'); }
     });
-    req.tokenPayload = tokenPayload;
+    const userInfo = Object.entries(tokenPayload).reduce((acc, data) => {
+      const key = data[0]; const value = data[1];
+      const skip = ['iat', 'exp', 'iss', 'sub'];
+      if (skip.includes(key)) return acc;
+      acc[key] = value;
+      return acc;
+    }, {});
+    req.userInfo = userInfo;
     return next();
   } catch (error) {
     if (error.expiredAt) {

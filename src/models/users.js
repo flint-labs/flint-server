@@ -19,7 +19,7 @@ module.exports = (sequelize, DataTypes) => sequelize.define('users', {
   },
   password: {
     field: 'password',
-    type: DataTypes.STRING(20),
+    type: DataTypes.STRING(100),
     allowNull: false,
   },
   gender: {
