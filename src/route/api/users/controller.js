@@ -8,7 +8,7 @@ const logger = getLogger('Users');
 // GET /api/users/checkEmail/:email
 exports.checkEmail = async (req, res) => {
   const { email } = req.params;
-  const userExist = await Users.findOne({ where: { email } }).sele;
+  const userExist = await Users.findOne({ where: { email } });
   res.status(200).send({ isExist: !!userExist });
 };
 
@@ -24,8 +24,8 @@ exports.signUp = async (req, res) => {
     if (isExist) return res.status(400).send('이미 사용된 이메일입니다 :(');
 
     const { password } = value;
-    const hash = await encryptPassword(password);
-    const created = await Users.create({ ...value, password: hash });
+    const encrypted = await encryptPassword(password);
+    const created = await Users.create({ ...value, password: encrypted });
     return res.send(created);
   } catch (error) {
     return logger.error(error);
