@@ -1,12 +1,23 @@
+const Sequelize = require('sequelize');
 const { Challenges } = require('../../../models');
 const { getLogger } = require('../../../../config');
 
 const logger = getLogger('Challenges');
+const { Op } = Sequelize;
 
-// GET /api/challenges/userChallenge/:userId/
+// GET /api/challenges/getInProgressChallenges/:userId/
 exports.getInProgressChallenges = async (req, res) => {
   const { userId } = req.params;
   const challenges = await Challenges.findAll({ where: { userId, state: 'inProgress' } });
+  res.status(200).send({ challenges });
+};
+
+// GET /api/challenges/getChallengesHistory/:userId/
+exports.getChallengesHistory = async (req, res) => {
+  const { userId } = req.params;
+  const challenges = await Challenges.findAll({
+    where: { userId, state: { [Op.ne]: 'inProgress' } },
+  });
   res.status(200).send({ challenges });
 };
 
