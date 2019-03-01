@@ -6,6 +6,7 @@ route.get('/', (req, res) => {
 });
 
 route.get('/getInProgressChallenges/:userId', dashboardController.getInProgressChallenges);
+route.get('/getChallengesHistory/:userId', dashboardController.getChallengesHistory);
 // route.post('/', dashboardController.signUp);
 
 module.exports = route;
