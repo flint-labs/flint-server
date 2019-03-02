@@ -5,18 +5,41 @@ const { getLogger } = require('../../../../config');
 
 const logger = getLogger('Users');
 
+// GET /api/users/:id
+exports.getDetail = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await Users.findOne({ where: { id } });
+    if (!user) return res.status(400).send('등록되지 않은 사용자입니다 :(');
+    return res.status(200).send({ user });
+  } catch (error) {
+    logger.error(error);
+    return res.status(400).send({ error });
+  }
+};
+
 // GET /api/users/checkEmail/:email
 exports.checkEmail = async (req, res) => {
-  const { email } = req.params;
-  const emailExist = await Users.findOne({ where: { email } });
-  res.status(200).send({ isExist: !!emailExist });
+  try {
+    const { email } = req.params;
+    const emailExist = await Users.findOne({ where: { email } });
+    res.status(200).send({ isExist: !!emailExist });
+  } catch (error) {
+    logger.error(error);
+    res.status(400).send({ error });
+  }
 };
 
 // GET /api/users/checkNickname/:nickname
 exports.checkNickname = async (req, res) => {
-  const { nickname } = req.params;
-  const nicknameExist = await Users.findOne({ where: { nickname } });
-  res.status(200).send({ isExist: !!nicknameExist });
+  try {
+    const { nickname } = req.params;
+    const nicknameExist = await Users.findOne({ where: { nickname } });
+    res.status(200).send({ isExist: !!nicknameExist });
+  } catch (error) {
+    logger.error(error);
+    res.status(400).send({ error });
+  }
 };
 
 // POST /api/users/signUp
