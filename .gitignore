@@ -2,3 +2,4 @@
 .env
 /log
 /config/sequelize.json
+/.vscode

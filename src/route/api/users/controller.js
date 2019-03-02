@@ -5,11 +5,41 @@ const { getLogger } = require('../../../../config');
 
 const logger = getLogger('Users');
 
+// GET /api/users/:id
+exports.getDetail = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await Users.findOne({ where: { id } });
+    if (!user) return res.status(400).send('등록되지 않은 사용자입니다 :(');
+    return res.status(200).send({ user });
+  } catch (error) {
+    logger.error(error);
+    return res.status(400).send({ error });
+  }
+};
+
 // GET /api/users/checkEmail/:email
 exports.checkEmail = async (req, res) => {
-  const { email } = req.params;
-  const userExist = await Users.findOne({ where: { email } });
-  res.status(200).send({ isExist: !!userExist });
+  try {
+    const { email } = req.params;
+    const emailExist = await Users.findOne({ where: { email } });
+    res.status(200).send({ isExist: !!emailExist });
+  } catch (error) {
+    logger.error(error);
+    res.status(400).send({ error });
+  }
+};
+
+// GET /api/users/checkNickname/:nickname
+exports.checkNickname = async (req, res) => {
+  try {
+    const { nickname } = req.params;
+    const nicknameExist = await Users.findOne({ where: { nickname } });
+    res.status(200).send({ isExist: !!nicknameExist });
+  } catch (error) {
+    logger.error(error);
+    res.status(400).send({ error });
+  }
 };
 
 // POST /api/users/signUp
@@ -20,14 +50,23 @@ exports.signUp = async (req, res) => {
     if (error) return res.status(400).send('입력하신 양식이 맞지 않습니다 :(');
 
     const { email } = value;
-    const isExist = await Users.findOne({ where: { email } });
-    if (isExist) return res.status(400).send('이미 사용된 이메일입니다 :(');
+    const emailExist = await Users.findOne({ where: { email } });
+    if (emailExist) return res.status(400).send('이미 사용된 이메일입니다 :(');
+
+    const { nickname } = value;
+    const nicknameExist = await Users.findOne({ where: { nickname } });
+    if (nicknameExist) return res.status(400).send('이미 사용된 닉네임입니다 :(');
 
     const { password } = value;
     const encrypted = await encryptPassword(password);
     const created = await Users.create({ ...value, password: encrypted });
-    return res.send(created);
+
+    const { dataValues } = created;
+    delete dataValues.password;
+
+    return res.send({ user: dataValues });
   } catch (error) {
-    return logger.error(error);
+    logger.error(error);
+    return res.status(400).send({ error });
   }
 };
