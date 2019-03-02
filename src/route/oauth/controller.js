@@ -28,7 +28,8 @@ exports.signIn = async (req, res) => {
 
     return res.status(200).send({ user: dataValues });
   } catch (error) {
-    return logger.error(error);
+    logger.error(error);
+    return res.status(500).send({ error });
   }
 };
 
@@ -43,5 +44,6 @@ exports.issueAccessToken = async (req, res) => {
     res.status(200).send({ user: userInfo });
   } catch (error) {
     logger.error(error);
+    res.status(500).send({ error });
   }
 };
