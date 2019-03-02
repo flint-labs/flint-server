@@ -1,15 +1,18 @@
 const route = require('express').Router();
 
 const controller = require('./controller.setting');
-
-route.post('/setting', controller.challengeSetting);
-
 const dashboardController = require('./dashboardController');
 
 route.get('/', (req, res) => {
   res.send('this is challenge route');
 });
 
+// 준홍
+route.post('/setting', controller.challengeSetting);
+
+route.get('/charities', controller.charities);
+
+// 건
 route.get(
   '/getInProgressChallenges/:userId',
   dashboardController.getInProgressChallenges,
