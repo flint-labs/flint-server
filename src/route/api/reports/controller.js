@@ -37,8 +37,14 @@ exports.postReport = async (req, res) => {
 };
 
 // POST /api/reports/responseReport/
-exports.responseReport = (req, res) => {
-  const check = req.body;
-  console.log(check);
+exports.responseReport = async (req, res) => {
+  const confirm = req.body;
+  console.log(confirm);
+
+  await Reports.update(
+    { isConfirmed: confirm.check },
+    { where: { id: confirm.reportId } },
+  );
+
   res.status(200).send('ok');
 };
