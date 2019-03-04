@@ -14,7 +14,7 @@ exports.signToken = token => (userInfo, secret) => {
   const expiresIn = token === 'x-access-token' ? '3h' : '14d';
   const tokenOption = {
     expiresIn,
-    issuer: 'where-is-my-cup',
+    issuer: 'flint',
     subject: token,
   };
   return jwtSign(userInfo, secret, tokenOption);

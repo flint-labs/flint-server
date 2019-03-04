@@ -11,7 +11,11 @@ exports.getDetail = async (req, res) => {
     const { id } = req.params;
     const user = await Users.findOne({ where: { id } });
     if (!user) return res.status(400).send('등록되지 않은 사용자입니다 :(');
-    return res.status(200).send({ user });
+
+    const { dataValues } = user;
+    delete dataValues.password;
+
+    return res.status(200).send({ user: dataValues });
   } catch (error) {
     logger.error(error);
     return res.status(400).send({ error });
