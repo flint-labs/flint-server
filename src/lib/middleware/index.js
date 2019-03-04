@@ -50,7 +50,7 @@ exports.checkToken = token => async (req, res, next) => {
     } else {
       logger.error(error.message);
     }
-    return res.status(401).send(error.message);
+    return res.status(401).send({ error, token });
   } finally {
     logger.trace('');
     logger.trace('Finish work!');
