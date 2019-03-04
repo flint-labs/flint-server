@@ -10,11 +10,16 @@ module.exports = (sequelize, DataTypes) => sequelize.define('reports', {
     type: DataTypes.STRING(500),
     allowNull: false,
   },
-  // createdAt: {
-  //   field: 'createdAt',
-  //   type: DataTypes.DATE,
-  //   allowNull: false,
-  // },
+  createdAt: {
+    field: 'createdAt',
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  description: {
+    field: 'description',
+    type: DataTypes.STRING(200),
+    allowNull: false,
+  },
   isConfirmed: {
     field: 'isConfirmed',
     type: DataTypes.STRING(50),
