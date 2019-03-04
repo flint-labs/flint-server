@@ -1,5 +1,5 @@
 // const Sequelize = require('sequelize');
-const { Reports, Challenges, Users } = require('../../../models');
+const { Reports, Challenges } = require('../../../models');
 const { getLogger } = require('../../../../config');
 
 const logger = getLogger('Challenges');
@@ -11,25 +11,34 @@ exports.postReport = async (req, res) => {
     const report = req.body;
 
     const userAndRefereeId = await Challenges.findAll({
-      attributes: ['userId', 'refereeId'],
       where: { id: report.challengeId },
     });
     const { userId, refereeId } = userAndRefereeId[0].dataValues;
+    const reported = await Reports.create(report);
     if (userId === refereeId) {
-      report.isConfirmed = 'true'; // 모드 확인해서 셀프면 true
+      // report.isConfirmed = 'true'; // 모드 확인해서 셀프면 true
+      await Reports.update(
+        { isConfirmed: true },
+        {
+          where: { id: reported.id },
+        },
+      );
     } else {
       // referee mode
-      console.log(refereeId);
       const io = req.app.get('socketio');
-      const nickname = await Users.findAll({
-        attributes: ['nickname'],
-        where: { id: userId },
+      io.emit(refereeId, {
+        ...reported.dataValues,
       });
-      io.emit(refereeId, { ...report, userId, nickname: nickname[0].dataValues.nickname });
     }
-    const reported = await Reports.create(report);
     return res.status(200).send({ reported });
   } catch (error) {
     return logger.error(error);
   }
+};
+
+// POST /api/reports/responseReport/
+exports.responseReport = (req, res) => {
+  const check = req.body;
+  console.log(check);
+  res.status(200).send('ok');
 };
