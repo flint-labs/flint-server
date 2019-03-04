@@ -7,12 +7,17 @@ module.exports = (sequelize, DataTypes) => sequelize.define('reports', {
   },
   image: {
     field: 'image',
-    type: DataTypes.STRING(200),
+    type: DataTypes.STRING(500),
     allowNull: false,
   },
-  createAt: {
-    field: 'createAt',
+  createdAt: {
+    field: 'createdAt',
     type: DataTypes.DATE,
+    allowNull: false,
+  },
+  description: {
+    field: 'description',
+    type: DataTypes.STRING(200),
     allowNull: false,
   },
   isConfirmed: {

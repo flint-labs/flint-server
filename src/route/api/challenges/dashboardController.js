@@ -7,36 +7,26 @@ const { Op } = Sequelize;
 
 // GET /api/challenges/getInProgressChallenges/:userId/
 exports.getInProgressChallenges = async (req, res) => {
-  const { userId } = req.params;
-  const challenges = await Challenges.findAll({ where: { userId, state: 'inProgress' } });
-  res.status(200).send({ challenges });
+  try {
+    const { userId } = req.params;
+    const challenges = await Challenges.findAll({
+      where: { userId, [Op.or]: [{ state: 'inProgress' }, { state: 'pending' }] },
+    });
+    return res.status(200).send({ challenges });
+  } catch (error) {
+    return logger.error(error);
+  }
 };
 
 // GET /api/challenges/getChallengesHistory/:userId/
 exports.getChallengesHistory = async (req, res) => {
-  const { userId } = req.params;
-  const challenges = await Challenges.findAll({
-    where: { userId, state: { [Op.ne]: 'inProgress' } },
-  });
-  res.status(200).send({ challenges });
+  try {
+    const { userId } = req.params;
+    const challenges = await Challenges.findAll({
+      where: { userId, [Op.or]: [{ state: 'success' }, { state: 'failure' }] },
+    });
+    return res.status(200).send({ challenges });
+  } catch (error) {
+    return logger.error(error);
+  }
 };
-
-// POST /api/users/signUp
-// exports.signUp = async (req, res) => {
-//   try {
-//     const { user } = req.body;
-//     const { value, error } = validateUser(user);
-//     if (error) return res.status(400).send('입력하신 양식이 맞지 않습니다 :(');
-
-//     const { email } = value;
-//     const isExist = await Users.findOne({ where: { email } });
-//     if (isExist) return res.status(400).send('이미 사용된 이메일입니다 :(');
-
-//     const { password } = value;
-//     const hash = await encryptPassword(password);
-//     const created = await Users.create({ ...value, password: hash });
-//     return res.send(created);
-//   } catch (error) {
-//     return logger.error(error);
-//   }
-// };
