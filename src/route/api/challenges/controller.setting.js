@@ -21,7 +21,7 @@ exports.challengeSetting = async (req, res) => {
 
   const startAt = new Date(startYear, startMonth - 1, startDay);
   const endAt = new Date(startAt.getTime() + 604800000 * week);
-  const state = startAt.getTime() - Date.now() > 0 ? 'pendding' : 'inProgress';
+  const state = startAt.getTime() - Date.now() > 0 ? 'pending' : 'inProgress';
 
   const refereeId = await Users.findOne({
     where: { nickname: referee },
