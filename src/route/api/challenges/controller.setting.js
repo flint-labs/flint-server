@@ -1,5 +1,6 @@
 const { Challenges, Users, Charities } = require('../../../models');
 
+// POST /api/challenges/setting
 exports.challengeSetting = async (req, res) => {
   const {
     title,
@@ -53,6 +54,7 @@ exports.challengeSetting = async (req, res) => {
   res.status(200).send('ok');
 };
 
+// GET /api/challenges/charities
 exports.charities = async (req, res) => {
   try {
     const charitieList = await Charities.findAll();
