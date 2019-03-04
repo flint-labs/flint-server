@@ -3,6 +3,6 @@ const controller = require('./controller');
 
 route.post('/postReport', controller.postReport);
 
-route.get('/getReports/:challengeId');
+route.get('/getReports/:challengeId', controller.getReports);
 
 module.exports = route;
