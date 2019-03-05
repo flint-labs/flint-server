@@ -1,5 +1,5 @@
 // const Sequelize = require('sequelize');
-const { Reports, Challenges } = require('../../../models');
+const { Reports, Challenges, Users } = require('../../../models');
 const { getLogger } = require('../../../../config');
 
 const logger = getLogger('Challenges');
@@ -25,9 +25,16 @@ exports.postReport = async (req, res) => {
       );
     } else {
       // referee mode
+      const { id, nickname } = (await Users.findAll({
+        where: {
+          id: userId,
+        },
+      }))[0].dataValues;
       const io = req.app.get('socketio');
       io.emit(refereeId, {
         ...reported.dataValues,
+        userId: id,
+        nickname,
       });
     }
     return res.status(200).send({ reported });
@@ -36,15 +43,22 @@ exports.postReport = async (req, res) => {
   }
 };
 
+// GET /api/reports/getReports/:challengeId
+exports.getReports = async (req, res) => {
+  try {
+    const { challengeId } = req.params;
+    const reports = await Reports.findAll({
+      where: { challengeId },
+    });
+    return res.status(200).send({ reports });
+  } catch (error) {
+    return logger.error(error);
+  }
+};
+
 // POST /api/reports/responseReport/
-exports.responseReport = async (req, res) => {
-  const confirm = req.body;
-  console.log(confirm);
-
-  await Reports.update(
-    { isConfirmed: confirm.check },
-    { where: { id: confirm.reportId } },
-  );
-
+exports.responseReport = (req, res) => {
+  const check = req.body;
+  console.log(check);
   res.status(200).send('ok');
 };
