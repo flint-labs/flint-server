@@ -57,7 +57,16 @@ exports.getNotPendingReports = async (req, res) => {
 };
 
 // POST /api/reports/responseReport/
-exports.responseReport = (req, res) => {
-  const check = req.body;
-  res.status(200).send('ok');
+exports.responseReport = async (req, res) => {
+  const confirm = req.body;
+  try {
+    await Reports.update(
+      { isConfirmed: confirm.check },
+      { where: { id: confirm.reportId } },
+    );
+
+    return res.status(200).send('ok');
+  } catch (err) {
+    return res.status(400).send({ err });
+  }
 };
