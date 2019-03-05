@@ -59,6 +59,5 @@ exports.getReports = async (req, res) => {
 // POST /api/reports/responseReport/
 exports.responseReport = (req, res) => {
   const check = req.body;
-  console.log(check);
   res.status(200).send('ok');
 };
