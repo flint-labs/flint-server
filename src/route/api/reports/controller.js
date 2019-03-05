@@ -1,9 +1,9 @@
-// const Sequelize = require('sequelize');
+const Sequelize = require('sequelize');
 const { Reports, Challenges, Users } = require('../../../models');
 const { getLogger } = require('../../../../config');
 
 const logger = getLogger('Challenges');
-// const { Op } = Sequelize;
+const { Op } = Sequelize;
 
 // POST /api/reports/postReport/
 exports.postReport = async (req, res) => {
@@ -44,11 +44,11 @@ exports.postReport = async (req, res) => {
 };
 
 // GET /api/reports/getReports/:challengeId
-exports.getReports = async (req, res) => {
+exports.getNotPendingReports = async (req, res) => {
   try {
     const { challengeId } = req.params;
     const reports = await Reports.findAll({
-      where: { challengeId },
+      where: { challengeId, isConfirmed: { [Op.ne]: 'pending' } },
     });
     return res.status(200).send({ reports });
   } catch (error) {
