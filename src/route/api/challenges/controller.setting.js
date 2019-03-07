@@ -55,7 +55,7 @@ exports.challengeSetting = async (req, res) => {
 
     res.status(200).send('ok');
   } catch (err) {
-    console.log('err');
+    console.log(err.message);
   }
 };
 
