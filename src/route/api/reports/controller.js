@@ -18,7 +18,7 @@ exports.postReport = async (req, res) => {
     if (userId === refereeId) {
       // report.isConfirmed = 'true'; // 모드 확인해서 셀프면 true
       await Reports.update(
-        { isConfirmed: true },
+        { isConfirmed: 'true' },
         {
           where: { id: reported.id },
         },
