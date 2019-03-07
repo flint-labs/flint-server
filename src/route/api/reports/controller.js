@@ -70,3 +70,30 @@ exports.responseReport = async (req, res) => {
     return res.status(400).send({ err });
   }
 };
+
+// GET /api/reports/getRequireList/:id
+exports.getRequireList = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const list = await Reports.findAll(
+      { where: { isConfirmed: 'pending' } },
+      {
+        include: [
+          {
+            model: Challenges,
+            where: {
+              refereeId: id,
+            },
+          },
+        ],
+      },
+    );
+
+    console.log(list);
+    return res.status(200).send(list);
+  } catch (error) {
+    logger.error(error);
+    return res.status(400).send({ error });
+  }
+};
