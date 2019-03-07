@@ -25,12 +25,21 @@ db.Challenges.belongsTo(db.Users, {
   targetKey: 'id',
 });
 
+db.Users.hasMany(db.Challenges, {
+  foreignKey: 'receipient_user_id',
+  sourceKey: 'id',
+});
+db.Challenges.belongsTo(db.Users, {
+  foreignKey: 'receipient_user_id',
+  targetKey: 'id',
+});
+
 db.Charities.hasMany(db.Challenges, {
   foreignKey: 'receipient_charity_id',
   sourceKey: 'id',
 });
 db.Challenges.belongsTo(db.Charities, {
-  foreignKey: 'receipient_user_id',
+  foreignKey: 'receipient_charity_id',
   targetKey: 'id',
 });
 
