@@ -1,4 +1,4 @@
-const { Users, Challenges } = require('../../../models');
+const { Users, Challenges, Reports } = require('../../../models');
 const {
   Joi: { validateUser },
 } = require('../../../service');
@@ -95,6 +95,41 @@ exports.signUp = async (req, res) => {
     delete dataValues.password;
 
     return res.send({ user: dataValues });
+  } catch (error) {
+    logger.error(error);
+    return res.status(400).send({ error });
+  }
+};
+
+// DELETE /api/users/deleteAccount/:id
+exports.deleteAccount = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const challengeList = await Challenges.findAll({ where: { userId: id } });
+
+    const deleteReports = challengeList.map(ele =>
+      Reports.destory({ where: { challenge_id: ele.id } }),
+    );
+    await Promise.all(deleteReports);
+
+    const list = await Challenges.findAll({ where: { refereeId: id } });
+
+    const updatedMode = list.map(ele =>
+      Challenges.update(
+        { refereeId: ele.userId },
+        { where: { refereeId: id } },
+      ),
+    );
+    await Promise.all(updatedMode);
+
+    const deleteChallenges = challengeList.map(ele =>
+      Challenges.destory({ where: { id: ele.id } }),
+    );
+    await Promise.all(deleteChallenges);
+
+    await Users.destory({ where: { id } });
+    return res.status(200).send('delete ok');
   } catch (error) {
     logger.error(error);
     return res.status(400).send({ error });
