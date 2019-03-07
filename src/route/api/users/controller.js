@@ -109,8 +109,9 @@ exports.deleteAccount = async (req, res) => {
     const challengeList = await Challenges.findAll({ where: { userId: id } });
 
     const deleteReports = challengeList.map(ele =>
-      Reports.destory({ where: { challenge_id: ele.id } }),
+      Reports.destroy({ where: { challengeId: ele.id } }),
     );
+
     await Promise.all(deleteReports);
 
     const list = await Challenges.findAll({ where: { refereeId: id } });
@@ -124,11 +125,12 @@ exports.deleteAccount = async (req, res) => {
     await Promise.all(updatedMode);
 
     const deleteChallenges = challengeList.map(ele =>
-      Challenges.destory({ where: { id: ele.id } }),
+      Challenges.destroy({ where: { id: ele.id } }),
     );
     await Promise.all(deleteChallenges);
 
-    await Users.destory({ where: { id } });
+    await Users.destroy({ where: { id } });
+
     return res.status(200).send('delete ok');
   } catch (error) {
     logger.error(error);
