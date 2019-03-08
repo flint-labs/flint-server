@@ -43,7 +43,7 @@ exports.postReport = async (req, res) => {
   }
 };
 
-// GET /api/reports/getReports/:challengeId
+// GET /api/reports/getNotPendingReports/:challengeId
 exports.getNotPendingReports = async (req, res) => {
   try {
     const { challengeId } = req.params;
@@ -60,10 +60,7 @@ exports.getNotPendingReports = async (req, res) => {
 exports.responseReport = async (req, res) => {
   const confirm = req.body;
   try {
-    await Reports.update(
-      { isConfirmed: confirm.check },
-      { where: { id: confirm.reportId } },
-    );
+    await Reports.update({ isConfirmed: confirm.check }, { where: { id: confirm.reportId } });
 
     return res.status(200).send('ok');
   } catch (err) {

@@ -17,10 +17,16 @@ route.get(
   '/getInProgressChallenges/:userId',
   dashboardController.getInProgressChallenges,
 );
+
 route.get(
   '/getChallengesHistory/:userId',
   dashboardController.getChallengesHistory,
 );
-// route.post('/', dashboardController.signUp);
+
+route.put(
+  '/updateChallengeState/:challengeId/:willState',
+  dashboardController.updateChallengeState,
+);
+
 
 module.exports = route;
