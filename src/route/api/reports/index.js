@@ -7,7 +7,7 @@ const checkAccessToken = checkToken('x-access-token');
 route.post('/postReport', controller.postReport);
 
 route.post('/responseReport', checkAccessToken, controller.responseReport);
-route.get('/getNotPendingReports/:challengeId', controller.getNotPendingReports);
+route.get('/getNotPendingReports/:challengeId', controller.getReports);
 
 route.get('/getRequireList/:id', checkAccessToken, controller.getRequireList);
 
