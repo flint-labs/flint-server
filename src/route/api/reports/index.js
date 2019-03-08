@@ -1,9 +1,17 @@
 const route = require('express').Router();
 const controller = require('./controller');
+const { checkToken } = require('../../../lib/middleware');
+
+const checkAccessToken = checkToken('x-access-token');
 
 route.post('/postReport', controller.postReport);
 
-route.post('/responseReport', controller.responseReport);
-route.get('/getNotPendingReports/:challengeId', controller.getNotPendingReports);
+route.post('/responseReport', checkAccessToken, controller.responseReport);
+route.get(
+  '/getNotPendingReports/:challengeId',
+  controller.getNotPendingReports,
+);
+
+route.get('/getRequireList/:id', checkAccessToken, controller.getRequireList);
 
 module.exports = route;
