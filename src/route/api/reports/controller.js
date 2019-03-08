@@ -60,10 +60,7 @@ exports.getNotPendingReports = async (req, res) => {
 exports.responseReport = async (req, res) => {
   const confirm = req.body;
   try {
-    await Reports.update(
-      { isConfirmed: confirm.check },
-      { where: { id: confirm.reportId } },
-    );
+    await Reports.update({ isConfirmed: confirm.check }, { where: { id: confirm.reportId } });
 
     return res.status(200).send('ok');
   } catch (err) {
@@ -94,5 +91,26 @@ exports.getRequireList = async (req, res) => {
   } catch (error) {
     logger.error(error);
     return res.status(400).send({ error });
+  }
+};
+
+// PUT /api/reports/updateReports/
+exports.updateReports = async (req, res) => {
+  console.log(req.body);
+  const { reportsId, willBeConfirmed } = req.body;
+  try {
+    const result = await Reports.update(
+      { isConfirmed: willBeConfirmed },
+      {
+        where: {
+          id: {
+            [Op.or]: [reportsId],
+          },
+        },
+      },
+    );
+    return res.status(200).send(result);
+  } catch (error) {
+    return logger.error(error);
   }
 };
