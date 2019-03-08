@@ -43,12 +43,12 @@ exports.postReport = async (req, res) => {
   }
 };
 
-// GET /api/reports/getNotPendingReports/:challengeId
-exports.getNotPendingReports = async (req, res) => {
+// GET /api/reports/getReports/:challengeId
+exports.getReports = async (req, res) => {
   try {
     const { challengeId } = req.params;
     const reports = await Reports.findAll({
-      where: { challengeId, isConfirmed: { [Op.ne]: 'pending' } },
+      where: { challengeId },
     });
     return res.status(200).send({ reports });
   } catch (error) {
