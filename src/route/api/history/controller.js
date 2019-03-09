@@ -11,7 +11,7 @@ exports.completeList = async (req, res) => {
     const completeChallengelist = await Challenges.findAll({
       where: {
         userId,
-        $or: [{ state: { $eq: 'success' } }, { state: { $eq: 'faliure' } }],
+        $or: [{ state: { $eq: 'success' } }, { state: { $eq: 'failure' } }],
       },
     });
     return res.status(200).send(completeChallengelist);
