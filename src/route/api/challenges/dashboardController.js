@@ -31,22 +31,20 @@ exports.getChallengesHistory = async (req, res) => {
   }
 };
 
-// PUT /api/challenges/updateChallengeState/:challengeId/:willState
-exports.updateChallengeState = async (req, res) => {
+// PUT /api/challenges/updateChallengesState/
+exports.updateChallengesState = async (req, res) => {
   try {
-    const { challengeId, willState } = req.params;
-    let updateChallenge;
-    if (willState === 'success') {
-      updateChallenge = await Challenges.update(
-        { state: 'success' },
-        { where: { id: challengeId } },
-      );
-    } else {
-      updateChallenge = await Challenges.update(
-        { state: 'failure' },
-        { where: { id: challengeId } },
-      );
-    }
+    const { challengesId, willState } = req.body;
+    const updateChallenge = await Challenges.update(
+      { state: willState },
+      {
+        where: {
+          id: {
+            [Op.or]: challengesId,
+          },
+        },
+      },
+    );
     return res.status(200).send({ updateChallenge });
   } catch (error) {
     return logger.error(error);

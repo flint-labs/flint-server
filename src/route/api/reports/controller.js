@@ -96,7 +96,6 @@ exports.getRequireList = async (req, res) => {
 
 // PUT /api/reports/updateReports/
 exports.updateReports = async (req, res) => {
-  console.log(req.body);
   const { reportsId, willBeConfirmed } = req.body;
   try {
     const result = await Reports.update(
@@ -104,7 +103,7 @@ exports.updateReports = async (req, res) => {
       {
         where: {
           id: {
-            [Op.or]: [reportsId],
+            [Op.or]: reportsId,
           },
         },
       },
