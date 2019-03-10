@@ -28,10 +28,6 @@ route.get(
   dashboardController.getChallengesHistory,
 );
 
-route.put(
-  '/updateChallengeState/:challengeId/:willState',
-  checkAccessToken,
-  dashboardController.updateChallengeState,
-);
+route.put('/updateChallengesState', checkAccessToken, dashboardController.updateChallengesState);
 
 module.exports = route;
