@@ -42,4 +42,9 @@ module.exports = (sequelize, DataTypes) => sequelize.define('users', {
     type: DataTypes.INTEGER.UNSIGNED,
     allowNull: false,
   },
+  pushToken: {
+    field: 'pushToken',
+    type: DataTypes.STRING(100),
+    allowNull: true,
+  },
 });
