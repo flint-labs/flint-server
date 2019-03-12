@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const { Reports, Challenges, Users } = require('../../../models');
 const { getLogger } = require('../../../../config');
+const axios = require('axios');
 
 const logger = getLogger('Challenges');
 const { Op } = Sequelize;
@@ -36,6 +37,25 @@ exports.postReport = async (req, res) => {
         userId: id,
         nickname,
       });
+      const response = await Users.findOne({
+        where: { id: refereeId },
+      });
+      const token = response.dataValues.pushToken;
+      axios.post(
+        'https://exp.host/--/api/v2/push/send',
+        {
+          to: token,
+          title: 'Flint',
+          body: '확인 요청이 왔어요',
+          sound: 'default',
+        },
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        },
+      );
     }
     return res.status(200).send({ reported });
   } catch (error) {
