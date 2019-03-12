@@ -113,3 +113,25 @@ exports.updateReports = async (req, res) => {
     return logger.error(error);
   }
 };
+
+// GET /api/reports/getFailureReport/:userId
+exports.getFailureReport = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const failureChallenge = await Reports.findAll({
+      where: { isConfirmed: 'false' },
+      include: [
+        {
+          model: Challenges,
+          where: {
+            state: 'inProgress',
+            userId,
+          },
+        },
+      ],
+    });
+    return res.status(200).send(failureChallenge);
+  } catch (error) {
+    return logger.error(error);
+  }
+};

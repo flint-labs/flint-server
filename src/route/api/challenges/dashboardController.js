@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const { Challenges } = require('../../../models');
+const { Challenges, Reports } = require('../../../models');
 const { getLogger } = require('../../../../config');
 
 const logger = getLogger('Challenges');
@@ -46,6 +46,28 @@ exports.updateChallengesState = async (req, res) => {
       },
     );
     return res.status(200).send({ updateChallenge });
+  } catch (error) {
+    return logger.error(error);
+  }
+};
+
+// GET /api/challenges/getFailureChallenge/:userId
+exports.getFailureChallenge = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const failureChallenge = await Reports.findAll({
+      where: { isConfirmed: 'false' },
+      include: [
+        {
+          model: Challenges,
+          where: {
+            state: 'inProgress',
+            userId,
+          },
+        },
+      ],
+    });
+    return res.status(200).send(failureChallenge);
   } catch (error) {
     return logger.error(error);
   }
