@@ -13,4 +13,6 @@ route.get('/getRequireList/:id', checkAccessToken, controller.getRequireList);
 
 route.put('/updateReports', checkAccessToken, controller.updateReports);
 
+route.get('/getFailureReport/:userId', checkAccessToken, controller.getFailureReport);
+
 module.exports = route;
