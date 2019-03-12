@@ -108,24 +108,22 @@ exports.deleteAccount = async (req, res) => {
 
     const challengeList = await Challenges.findAll({ where: { userId: id } });
 
-    const deleteReports = challengeList.map(ele =>
-      Reports.destroy({ where: { challengeId: ele.id } }),
+    const deleteReports = challengeList.map(
+      ele => Reports.destroy({ where: { challengeId: ele.id } }),
     );
 
     await Promise.all(deleteReports);
 
     const list = await Challenges.findAll({ where: { refereeId: id } });
 
-    const updatedMode = list.map(ele =>
-      Challenges.update(
-        { refereeId: ele.userId },
-        { where: { refereeId: id } },
-      ),
-    );
+    const updatedMode = list.map(ele => Challenges.update(
+      { refereeId: ele.userId },
+      { where: { refereeId: id } },
+    ));
     await Promise.all(updatedMode);
 
-    const deleteChallenges = challengeList.map(ele =>
-      Challenges.destroy({ where: { id: ele.id } }),
+    const deleteChallenges = challengeList.map(
+      ele => Challenges.destroy({ where: { id: ele.id } }),
     );
     await Promise.all(deleteChallenges);
 
