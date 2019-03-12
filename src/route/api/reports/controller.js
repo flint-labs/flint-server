@@ -60,10 +60,7 @@ exports.getReports = async (req, res) => {
 exports.responseReport = async (req, res) => {
   const confirm = req.body;
   try {
-    await Reports.update(
-      { isConfirmed: confirm.check },
-      { where: { id: confirm.reportId } },
-    );
+    await Reports.update({ isConfirmed: confirm.check }, { where: { id: confirm.reportId } });
 
     return res.status(200).send('ok');
   } catch (err) {
@@ -133,6 +130,29 @@ exports.getFailureReport = async (req, res) => {
       ],
     });
     return res.status(200).send(failureChallenge);
+  } catch (error) {
+    return logger.error(error);
+  }
+};
+
+// GET /api/reports/getSuccessOneShot/:userId
+exports.getSuccessOneShot = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const successOneShot = await Reports.findAll({
+      where: { isConfirmed: 'true' },
+      include: [
+        {
+          model: Challenges,
+          where: {
+            state: 'inProgress',
+            userId,
+            isOnGoing: false,
+          },
+        },
+      ],
+    });
+    return res.status(200).send(successOneShot);
   } catch (error) {
     return logger.error(error);
   }

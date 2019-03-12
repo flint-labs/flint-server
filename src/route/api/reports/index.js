@@ -15,4 +15,6 @@ route.put('/updateReports', checkAccessToken, controller.updateReports);
 
 route.get('/getFailureReport/:userId', checkAccessToken, controller.getFailureReport);
 
+route.get('/getSuccessOneShot/:userId', checkAccessToken, controller.getSuccessOneShot);
+
 module.exports = route;
