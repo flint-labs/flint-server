@@ -29,7 +29,7 @@ exports.validateUser = user => {
     change: Joi.number().default(0),
     createdAt: Joi.date().default(new Date()),
     updatedAt: Joi.date().default(new Date()),
-    pushToken: Joi.string(),
+    pushToken: Joi.string().allow(''),
   };
   return Joi.validate(user, schema);
 };
