@@ -1,6 +1,7 @@
 const Sequelize = require('sequelize');
 const { Reports, Challenges, Users } = require('../../../models');
 const { getLogger } = require('../../../../config');
+const axios = require('axios');
 
 const logger = getLogger('Challenges');
 const { Op } = Sequelize;
@@ -36,6 +37,25 @@ exports.postReport = async (req, res) => {
         userId: id,
         nickname,
       });
+      const response = await Users.findOne({
+        where: { id: refereeId },
+      });
+      const token = response.dataValues.pushToken;
+      axios.post(
+        'https://exp.host/--/api/v2/push/send',
+        {
+          to: token,
+          title: 'Flint',
+          body: '확인 요청이 왔어요',
+          sound: 'default',
+        },
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        },
+      );
     }
     return res.status(200).send({ reported });
   } catch (error) {
@@ -60,10 +80,7 @@ exports.getReports = async (req, res) => {
 exports.responseReport = async (req, res) => {
   const confirm = req.body;
   try {
-    await Reports.update(
-      { isConfirmed: confirm.check },
-      { where: { id: confirm.reportId } },
-    );
+    await Reports.update({ isConfirmed: confirm.check }, { where: { id: confirm.reportId } });
 
     return res.status(200).send('ok');
   } catch (err) {
@@ -111,6 +128,51 @@ exports.updateReports = async (req, res) => {
       },
     );
     return res.status(200).send(result);
+  } catch (error) {
+    return logger.error(error);
+  }
+};
+
+// GET /api/reports/getFailureReport/:userId
+exports.getFailureReport = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const failureChallenge = await Reports.findAll({
+      where: { isConfirmed: 'false' },
+      include: [
+        {
+          model: Challenges,
+          where: {
+            state: 'inProgress',
+            userId,
+          },
+        },
+      ],
+    });
+    return res.status(200).send(failureChallenge);
+  } catch (error) {
+    return logger.error(error);
+  }
+};
+
+// GET /api/reports/getSuccessOneShot/:userId
+exports.getSuccessOneShot = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const successOneShot = await Reports.findAll({
+      where: { isConfirmed: 'true' },
+      include: [
+        {
+          model: Challenges,
+          where: {
+            state: 'inProgress',
+            userId,
+            isOnGoing: false,
+          },
+        },
+      ],
+    });
+    return res.status(200).send(successOneShot);
   } catch (error) {
     return logger.error(error);
   }
