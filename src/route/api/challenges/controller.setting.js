@@ -13,8 +13,8 @@ exports.challengeSetting = async (req, res) => {
 
   delete challenge.referee;
   try {
-    await Challenges.create(challenge);
-    res.status(200).send('ok');
+    const newChallenge = await Challenges.create(challenge);
+    res.status(200).send(newChallenge);
   } catch (err) {
     console.log(err.message);
   }
