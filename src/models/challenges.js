@@ -75,4 +75,9 @@ module.exports = (sequelize, DataTypes) => sequelize.define('challenges', {
     field: 'description',
     type: DataTypes.STRING(50),
   },
+  merchant_uid: {
+    field: 'merchant_uid',
+    type: DataTypes.STRING(30),
+    allowNull: true,
+  },
 });
