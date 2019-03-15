@@ -4,6 +4,7 @@ const { checkToken } = require('../../../lib/middleware');
 
 const checkAccessToken = checkToken('x-access-token');
 
+route.get('/', controller.getAll);
 route.get('/:id', checkAccessToken, controller.getDetail);
 route.get('/checkNickname/:nickname', controller.checkNickname);
 route.get('/checkEmail/:email', controller.checkEmail);

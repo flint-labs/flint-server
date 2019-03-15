@@ -7,6 +7,24 @@ const { getLogger } = require('../../../../config');
 
 const logger = getLogger('Users');
 
+// GET /api/users
+exports.getAll = async (req, res) => {
+  try {
+    const { all } = req.query;
+    if (all) {
+      const users = await Users.findAll();
+      res.send(users);
+    } else {
+      const query = Object.entries(req.query);
+      const users = await Users.findAll({ attributes: query.filter(entry => entry[1] === 'true').map(entry => entry[0]) });
+      res.send(users);
+    }
+  } catch (error) {
+    logger.error(error);
+    res.status(400).send({ error });
+  }
+};
+
 // GET /api/users/:id
 exports.getDetail = async (req, res) => {
   try {
