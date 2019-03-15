@@ -40,6 +40,7 @@ app.use(bodyParser.json());
 
 app.use('/api', require('./src/route/api'));
 app.use('/oauth', require('./src/route/oauth'));
+app.use('/payment', require('./src/route/payment'));
 
 app.get('/', (req, res) => {
   res.status(200).send('Success');
