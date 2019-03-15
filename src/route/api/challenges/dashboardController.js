@@ -10,7 +10,11 @@ exports.getInProgressChallenges = async (req, res) => {
   try {
     const { userId } = req.params;
     const challenges = await Challenges.findAll({
-      where: { userId, [Op.or]: [{ state: 'inProgress' }, { state: 'pending' }] },
+      where: {
+        userId,
+        [Op.or]: [{ state: 'inProgress' }, { state: 'pending' }],
+        merchant_uid: { $not: NULL },
+      },
     });
     return res.status(200).send({ challenges });
   } catch (error) {
