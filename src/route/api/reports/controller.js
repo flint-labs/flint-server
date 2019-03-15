@@ -31,12 +31,12 @@ exports.postReport = async (req, res) => {
           id: userId,
         },
       }))[0].dataValues;
-      const io = req.app.get('socketio');
-      io.emit(refereeId, {
-        ...reported.dataValues,
-        userId: id,
-        nickname,
-      });
+      // const io = req.app.get('socketio');
+      // io.emit(refereeId, {
+      //   ...reported.dataValues,
+      //   userId: id,
+      //   nickname,
+      // });
       const response = await Users.findOne({
         where: { id: refereeId },
       });
