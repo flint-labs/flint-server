@@ -13,7 +13,7 @@ exports.getInProgressChallenges = async (req, res) => {
       where: {
         userId,
         [Op.or]: [{ state: 'inProgress' }, { state: 'pending' }],
-        merchant_uid: { $not: NULL },
+        merchant_uid: { $not: null },
       },
     });
     return res.status(200).send({ challenges });
