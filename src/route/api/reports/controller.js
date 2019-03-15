@@ -117,7 +117,7 @@ exports.getRequireList = async (req, res) => {
 
     const temp = await Promise.all(tempNicknameArray);
 
-    for (let i; i < temp.length; i += 1) {
+    for (let i = 0; i < temp.length; i += 1) {
       list[i].dataValues.nickname = temp[i][0].dataValues.nickname;
     }
 
