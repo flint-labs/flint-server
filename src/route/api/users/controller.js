@@ -16,7 +16,11 @@ exports.getAll = async (req, res) => {
       res.send(users);
     } else {
       const query = Object.entries(req.query);
-      const users = await Users.findAll({ attributes: query.filter(entry => entry[1] === 'true').map(entry => entry[0]) });
+      const users = await Users.findAll({
+        attributes: query
+          .filter(entry => entry[1] === 'true')
+          .map(entry => entry[0]),
+      });
       res.send(users);
     }
   } catch (error) {
@@ -32,7 +36,9 @@ exports.getDetail = async (req, res) => {
     const user = await Users.findOne({ where: { id } });
     if (!user) return res.status(400).send('등록되지 않은 사용자입니다 :(');
 
-    const list = await Challenges.findAll({ where: { userId: id } });
+    const list = await Challenges.findAll({
+      where: { userId: id, merchant_uid: { $not: null } },
+    });
     const totalChallenges = list.length;
     let inProgress = 0;
     let success = 0;
@@ -126,22 +132,24 @@ exports.deleteAccount = async (req, res) => {
 
     const challengeList = await Challenges.findAll({ where: { userId: id } });
 
-    const deleteReports = challengeList.map(
-      ele => Reports.destroy({ where: { challengeId: ele.id } }),
+    const deleteReports = challengeList.map(ele =>
+      Reports.destroy({ where: { challengeId: ele.id } }),
     );
 
     await Promise.all(deleteReports);
 
     const list = await Challenges.findAll({ where: { refereeId: id } });
 
-    const updatedMode = list.map(ele => Challenges.update(
-      { refereeId: ele.userId },
-      { where: { refereeId: id } },
-    ));
+    const updatedMode = list.map(ele =>
+      Challenges.update(
+        { refereeId: ele.userId },
+        { where: { refereeId: id } },
+      ),
+    );
     await Promise.all(updatedMode);
 
-    const deleteChallenges = challengeList.map(
-      ele => Challenges.destroy({ where: { id: ele.id } }),
+    const deleteChallenges = challengeList.map(ele =>
+      Challenges.destroy({ where: { id: ele.id } }),
     );
     await Promise.all(deleteChallenges);
 
