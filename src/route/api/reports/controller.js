@@ -80,7 +80,10 @@ exports.getReports = async (req, res) => {
 exports.responseReport = async (req, res) => {
   const confirm = req.body;
   try {
-    await Reports.update({ isConfirmed: confirm.check }, { where: { id: confirm.reportId } });
+    await Reports.update(
+      { isConfirmed: confirm.check },
+      { where: { id: confirm.reportId } },
+    );
 
     return res.status(200).send('ok');
   } catch (err) {
@@ -105,6 +108,18 @@ exports.getRequireList = async (req, res) => {
         },
       ],
     });
+
+    const tempNicknameArray = list.map(ele =>
+      Users.findAll({
+        where: { id: ele.challenge.userId },
+      }),
+    );
+
+    const temp = await Promise.all(tempNicknameArray);
+
+    for (let i = 0; i < temp.length; i += 1) {
+      list[i].dataValues.nickname = temp[i][0].dataValues.nickname;
+    }
 
     return res.status(200).send(list);
   } catch (error) {
