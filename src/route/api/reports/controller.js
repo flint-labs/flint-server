@@ -193,13 +193,14 @@ exports.getSuccessOneShot = async (req, res) => {
 exports.getSuccessOnGoing = async (req, res) => {
   try {
     const { userId } = req.params;
-    const test = await db.sequelize.query(
+    const response = await db.sequelize.query(
       `SELECT r.id AS reportId, ch.id AS id, ch.title, ch.refereeId, ch.startAt, ch.week, ch.checkingPeriod, ch.state, ch.amount, ch.isOnGoing, u.id AS userId FROM reports r INNER JOIN challenges ch ON r.challengeId = ch.id INNER JOIN users u ON ch.userId = u.id WHERE u.id = ${userId} AND ch.state='inProgress'`,
     );
     let result = null;
-    const challengesId = Array.from(new Set(test[0].map(el => el.challengeId)));
+    const challengesId = Array.from(new Set(response[0].map(el => el.id)));
+    console.log(challengesId);
     challengesId.forEach(el => {
-      const reports = test[0].filter(element => element.challengeId === el);
+      const reports = response[0].filter(element => element.id === el);
       if (!result && reports.length / (reports[0].week * reports[0].checkingPeriod) >= 1) {
         const [answer] = reports;
         result = answer;
