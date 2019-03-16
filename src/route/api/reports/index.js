@@ -17,4 +17,6 @@ route.get('/getFailureReport/:userId', checkAccessToken, controller.getFailureRe
 
 route.get('/getSuccessOneShot/:userId', checkAccessToken, controller.getSuccessOneShot);
 
+route.get('/getSuccessOnGoing/:userId', controller.getSuccessOnGoing);
+
 module.exports = route;
