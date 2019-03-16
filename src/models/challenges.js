@@ -80,4 +80,9 @@ module.exports = (sequelize, DataTypes) => sequelize.define('challenges', {
     type: DataTypes.STRING(30),
     allowNull: true,
   },
+  week: {
+    field: 'week',
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });

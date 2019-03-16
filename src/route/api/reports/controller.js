@@ -1,7 +1,8 @@
 const Sequelize = require('sequelize');
+const axios = require('axios');
+const db = require('../../../models');
 const { Reports, Challenges, Users } = require('../../../models');
 const { getLogger } = require('../../../../config');
-const axios = require('axios');
 
 const logger = getLogger('Challenges');
 const { Op } = Sequelize;
@@ -31,12 +32,12 @@ exports.postReport = async (req, res) => {
           id: userId,
         },
       }))[0].dataValues;
-      const io = req.app.get('socketio');
-      io.emit(refereeId, {
-        ...reported.dataValues,
-        userId: id,
-        nickname,
-      });
+      // const io = req.app.get('socketio');
+      // io.emit(refereeId, {
+      //   ...reported.dataValues,
+      //   userId: id,
+      //   nickname,
+      // });
       const response = await Users.findOne({
         where: { id: refereeId },
       });
@@ -188,6 +189,28 @@ exports.getSuccessOneShot = async (req, res) => {
       ],
     });
     return res.status(200).send(successOneShot);
+  } catch (error) {
+    return logger.error(error);
+  }
+};
+
+// GET /api/reports/getSuccessOnGoing/:userId
+exports.getSuccessOnGoing = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const test = await db.sequelize.query(
+      `SELECT r.id AS reportId, ch.id AS challengeId, ch.title, ch.refereeId, ch.startAt, ch.week, ch.checkingPeriod, ch.state, ch.amount, ch.isOnGoing, u.id AS userId FROM reports r INNER JOIN challenges ch ON r.challengeId = ch.id INNER JOIN users u ON ch.userId = u.id WHERE u.id = ${userId} AND ch.state='inProgress'`,
+    );
+    let result = null;
+    const challengesId = Array.from(new Set(test[0].map(el => el.challengeId)));
+    challengesId.forEach(el => {
+      const reports = test[0].filter(element => element.challengeId === el);
+      if (!result && reports.length / (reports[0].week * reports[0].checkingPeriod) >= 1) {
+        const [answer] = reports;
+        result = answer;
+      }
+    });
+    return res.status(200).send(result);
   } catch (error) {
     return logger.error(error);
   }
