@@ -39,9 +39,11 @@ exports.getDetail = async (req, res) => {
     const list = await Challenges.findAll({
       where: { userId: id, merchant_uid: { $not: null } },
     });
+
     const totalChallenges = list.length;
     let inProgress = 0;
     let success = 0;
+    let amount = 0;
 
     list.forEach(ele => {
       if (ele.dataValues.state === 'inProgress') {
@@ -49,6 +51,7 @@ exports.getDetail = async (req, res) => {
       }
       if (ele.dataValues.state === 'success') {
         success += 1;
+        amount += Number(ele.dataValues.amount);
       }
     });
 
@@ -58,6 +61,7 @@ exports.getDetail = async (req, res) => {
     dataValues.totalChallenges = totalChallenges;
     dataValues.inProgress = inProgress;
     dataValues.success = success;
+    dataValues.amount = amount;
 
     return res.status(200).send({ user: dataValues });
   } catch (error) {
