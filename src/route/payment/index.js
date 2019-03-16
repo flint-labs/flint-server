@@ -32,7 +32,10 @@ route.post('/complete/:challengeId', async (req, res) => {
     logger.debug('paymentData : ', paymentData);
 
     const { dataValues: { amount: amountToBePaid } } = await Challenges.findOne({ where: { id: challengeId }, attributes: ['amount'] });
-    const { amount, status } = paymentData;
+    const { status, pg_provider } = paymentData;
+    let { amount } = paymentData;
+
+    if (pg_provider === 'paypal') amount *= 1000;
     if (amount === amountToBePaid && status === 'paid') {
       await Challenges.update({ merchant_uid }, { where: { id: challengeId } });
       res.status(200).send({ status: 'success', message: '일반 결제 성공' });
