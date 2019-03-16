@@ -81,10 +81,7 @@ exports.getReports = async (req, res) => {
 exports.responseReport = async (req, res) => {
   const confirm = req.body;
   try {
-    await Reports.update(
-      { isConfirmed: confirm.check },
-      { where: { id: confirm.reportId } },
-    );
+    await Reports.update({ isConfirmed: confirm.check }, { where: { id: confirm.reportId } });
 
     return res.status(200).send('ok');
   } catch (err) {
@@ -110,11 +107,9 @@ exports.getRequireList = async (req, res) => {
       ],
     });
 
-    const tempNicknameArray = list.map(ele =>
-      Users.findAll({
-        where: { id: ele.challenge.userId },
-      }),
-    );
+    const tempNicknameArray = list.map(ele => Users.findAll({
+      where: { id: ele.challenge.userId },
+    }));
 
     const temp = await Promise.all(tempNicknameArray);
 
@@ -199,7 +194,7 @@ exports.getSuccessOnGoing = async (req, res) => {
   try {
     const { userId } = req.params;
     const test = await db.sequelize.query(
-      `SELECT r.id AS reportId, ch.id AS challengeId, ch.title, ch.refereeId, ch.startAt, ch.week, ch.checkingPeriod, ch.state, ch.amount, ch.isOnGoing, u.id AS userId FROM reports r INNER JOIN challenges ch ON r.challengeId = ch.id INNER JOIN users u ON ch.userId = u.id WHERE u.id = ${userId} AND ch.state='inProgress'`,
+      `SELECT r.id AS reportId, ch.id AS id, ch.title, ch.refereeId, ch.startAt, ch.week, ch.checkingPeriod, ch.state, ch.amount, ch.isOnGoing, u.id AS userId FROM reports r INNER JOIN challenges ch ON r.challengeId = ch.id INNER JOIN users u ON ch.userId = u.id WHERE u.id = ${userId} AND ch.state='inProgress'`,
     );
     let result = null;
     const challengesId = Array.from(new Set(test[0].map(el => el.challengeId)));
