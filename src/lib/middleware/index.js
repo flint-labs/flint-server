@@ -1,6 +1,5 @@
 const util = require('util');
 const jwt = require('jsonwebtoken');
-const logger = require('../../../config').getLogger('Middleware');
 
 const verifyToken = util.promisify(jwt.verify);
 
@@ -29,14 +28,21 @@ exports.checkToken = token => async (req, res, next) => {
     logger.trace('(2/2) Verifying the token');
     const tokenPayload = await verifyToken(JsonWebToken, secret);
     logger.trace('#### Token Payload ####');
-    Object.entries(tokenPayload).forEach((data) => {
-      const key = data[0]; let value = data[1];
+    Object.entries(tokenPayload).forEach(data => {
+      const key = data[0];
+      let value = data[1];
       if (key === 'iat' || key === 'exp') value = new Date(value * 1000).toLocaleString();
       logger.debug(`${key}  : ${value}`);
-      if (key === 'sub') if (value !== token) { logger.error(`The token '${value}' should be '${token}'`); throw Error('Token is invalid'); }
+      if (key === 'sub') {
+        if (value !== token) {
+          logger.error(`The token '${value}' should be '${token}'`);
+          throw Error('Token is invalid');
+        }
+      }
     });
     const userInfo = Object.entries(tokenPayload).reduce((acc, data) => {
-      const key = data[0]; const value = data[1];
+      const key = data[0];
+      const value = data[1];
       const skip = ['iat', 'exp', 'iss', 'sub'];
       if (skip.includes(key)) return acc;
       acc[key] = value;
@@ -56,3 +62,30 @@ exports.checkToken = token => async (req, res, next) => {
     logger.trace('Finish work!');
   }
 };
+
+const multer = require('multer');
+const aws = require('aws-sdk');
+const multerS3 = require('multer-s3');
+const logger = require('../../../config').getLogger('Middleware');
+const { accessKey, secretKey, s3bucket } = require('../../../config/storage.json');
+
+aws.config.update({
+  region: 'ap-northeast-2',
+  accessKeyId: accessKey,
+  secretAccessKey: secretKey,
+});
+
+const s3 = new aws.S3({});
+
+exports.upload = multer({
+  storage: multerS3({
+    s3,
+    bucket: s3bucket,
+    metadata(req, file, cb) {
+      cb(null, { fieldName: file.fieldname });
+    },
+    key(req, file, cb) {
+      cb(null, file.originalname);
+    },
+  }),
+});

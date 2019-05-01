@@ -1,10 +1,11 @@
 const route = require('express').Router();
 const controller = require('./controller');
-const { checkToken } = require('../../../lib/middleware');
+const { checkToken, upload } = require('../../../lib/middleware');
 
 const checkAccessToken = checkToken('x-access-token');
 
-route.post('/postReport', controller.postReport);
+route.post('/imageUpload', upload.single('fileData'), controller.imageUpload);
+route.post('/postReport', checkAccessToken, controller.postReport);
 
 route.post('/responseReport', checkAccessToken, controller.responseReport);
 route.get('/getReports/:challengeId', checkAccessToken, controller.getReports);
