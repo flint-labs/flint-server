@@ -3,3 +3,4 @@
 /log
 /config/sequelize.json
 /.vscode
+/config/storage.json

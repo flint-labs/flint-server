@@ -7,6 +7,15 @@ const { getLogger } = require('../../../../config');
 const logger = getLogger('Challenges');
 const { Op } = Sequelize;
 
+// POST /api/reports/imageUpload
+exports.imageUpload = async (req, res) => {
+  try {
+    return res.status(200).json('upload success');
+  } catch (err) {
+    return logger.log(err);
+  }
+};
+
 // POST /api/reports/postReport/
 exports.postReport = async (req, res) => {
   try {
@@ -27,11 +36,6 @@ exports.postReport = async (req, res) => {
       );
     } else {
       // referee mode
-      const { id, nickname } = (await Users.findAll({
-        where: {
-          id: userId,
-        },
-      }))[0].dataValues;
       // const io = req.app.get('socketio');
       // io.emit(refereeId, {
       //   ...reported.dataValues,
